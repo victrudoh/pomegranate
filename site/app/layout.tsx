@@ -54,9 +54,9 @@ export const metadata: Metadata = {
 };
 
 /**
- * Dark is the default theme. The inline script reads the stored preference and
- * applies it before first paint, so a light-theme visitor never sees a dark
- * flash. It is intentionally tiny and failure-tolerant.
+ * Light is the default theme. The inline script only overrides it when the
+ * visitor has explicitly chosen dark before, so a first-time reader gets light
+ * and a returning dark-mode reader gets dark with no flash of the wrong theme.
  */
 const themeScript = `
 try {
@@ -67,7 +67,7 @@ try {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="dark" suppressHydrationWarning>
+    <html lang="en" data-theme="light" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
@@ -76,6 +76,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />
+        {/* Portal target for the mobile menu.
+
+            The menu renders into this node instead of inside the header. The
+            header uses backdrop-filter, and a filtered element becomes the
+            containing block for its fixed-position descendants. That made the
+            menu's `inset: 0` resolve against the 64px header box rather than
+            the viewport, so the scrim covered almost nothing and the page
+            underneath stayed clickable. Rendering at body level removes the
+            containing block entirely. */}
+        <div id="overlay-root" />
       </body>
     </html>
   );

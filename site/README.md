@@ -57,6 +57,8 @@ No registry or index file needs updating. Adding the file is the whole workflow.
 
 The theme lives in one place: the `@theme` block and the two `[data-theme]` blocks in `site/app/globals.css`. Every colour resolves to a token, so retheming is a single-file change.
 
+**Light is the default.** A first-time reader gets light mode; an inline script applies a stored preference before first paint only if the reader has explicitly chosen dark, so a returning dark-mode reader never sees a flash of the wrong theme.
+
 | Token group | Purpose |
 | --- | --- |
 | `--bg`, `--bg-deep`, `--surface`, `--surface-2` | Layered backgrounds, darkest at the page level |
@@ -67,7 +69,7 @@ The theme lives in one place: the `@theme` block and the two `[data-theme]` bloc
 Deliberate constraints, all of them enforced in the code:
 
 - **One accent colour for the whole site.** Aril crimson (`#d94f5c` in dark, `#a8253a` in light). Nothing else is coloured.
-- **Dark is the default**, light is a supported alternative. The toggle persists to `localStorage` and an inline script applies the stored choice before first paint, so there is no theme flash.
+- **Light is the default**, dark is a supported alternative. The toggle persists to `localStorage`.
 - **One icon family at one stroke width** (1.6). Paths are inlined from Lucide; new icons should be too, rather than drawn by hand.
 - **No em-dashes or en-dashes** in any rendered copy. Periods, commas and colons instead.
 - **Motion is gated.** The entrance animation is a CSS `@keyframes` that runs on load, so the first frame is readable even with scripts blocked, and it is fully disabled under `prefers-reduced-motion`.
@@ -143,9 +145,37 @@ A full-screen panel rather than a dropdown. A dropdown of four links is the gene
 - **Items stagger in,** each with its own `animation-delay` derived from its index.
 - **Current section is marked** with an accent tint and an accent index number.
 - **Full keyboard support.** Escape closes and returns focus to the trigger, focus moves into the panel on open, body scroll locks while open, and the closed panel carries `inert` so it stays out of the tab order.
-- **Reduced motion is honoured.** The panel appears instantly and the rules stay put.
+- **The rest of the page is genuinely unreachable while open.** The scrim is a full-viewport blur that captures every click, and it is rendered through a portal into `#overlay-root` at the end of `<body>`. That placement is the fix, not a detail: rendered inline the scrim lived inside the header, which uses `backdrop-filter`, and a filtered element becomes the containing block for its fixed-position descendants. That made the scrim's `inset: 0` resolve against the 64px header box, so it covered almost nothing and the page underneath stayed clickable.
+- **Reduced motion and reduced transparency are honoured.** Motion off means the panel appears instantly; transparency off means the blur is replaced by a near-opaque ground.
 
 The prototype in `prototypes/` carries the same panel for the same reason.
+
+## Project visuals
+
+Each project card carries one of two kinds of image, and never a stock photo pretending to be the product:
+
+| Kind | File | Used for |
+| --- | --- | --- |
+| Real screenshot | `public/projects/<slug>.jpg` | Projects with a live, reachable site |
+| Abstract geometry | `public/projects/<slug>.png` | Projects with no public site |
+
+The four screenshots are genuine captures of `pxnapp.com`, `ibookam.com`, `plateaustate.gov.ng` and `nesconigeria.com`, taken headlessly at 1280x800, cropped to 16:9 from the top, and stored as JPEG. Regenerate them from raw captures in `.shots/`:
+
+```bash
+node tools/process-shots.mjs      # run from the repo root
+```
+
+The abstract panels are generated from a fixed seed per project, so they are byte-stable and reproducible:
+
+```bash
+cp ../tools/build-project-art.mjs ./ && node build-project-art.mjs
+```
+
+Each motif is chosen to suit the subject: a container diagram for the property platform, a wireframe surface for backend architecture, a load trace for the operations dashboard, a sweep for discovery, a lattice for commerce. They are drawn in the brand ramp so the cards stay inside the palette.
+
+**Why not live iframes?** All four sites permit framing (no `X-Frame-Options`, no `frame-ancestors`), so a live embed would work. It was rejected anyway: it would load four complete third-party sites, including their scripts and analytics, on every visit to the projects page. That is a real privacy and performance cost imposed on your readers to save one screenshot step. Static captures show the same thing with zero runtime cost. Revisit if you want the cards to stay current without redeploying.
+
+There are no remote image hosts configured in `next.config.mjs`, so nothing is fetched from a third party at runtime.
 
 ## Interactions
 
@@ -154,6 +184,7 @@ The site was built so that nothing here is required to read it. Every effect is 
 | Effect | Where | How |
 | --- | --- | --- |
 | Mobile menu panel | Under 768px | Full-screen panel, morphing trigger |
+| Full-page backdrop blur | Menu open | Portalled scrim with `backdrop-filter` |
 | Reading progress bar | Top of every page | CSS `animation-timeline: scroll(root)` |
 | Header elevation | On scroll | IntersectionObserver sentinel |
 | Cursor-tracking glow | Project cards | Pointer position written to CSS vars via ref |
@@ -173,13 +204,14 @@ The cursor glow is also skipped for coarse pointers, so touch devices never run 
 
 ## Before you deploy
 
-1. **Replace the photographs.** Every image is a placeholder from `picsum.photos`, seeded so it stays stable. They are not your products. Real screenshots of PXN, Dwelliva and Talmow will lift this more than any other single change. Swap the `image` fields in `site/lib/projects.ts` and the three image URLs in `page.tsx` and `about/page.tsx`.
-2. **Restore the Dwelliva link when the site is back up.** `dwelliva-app.com` currently returns HTTP 402 and the apex domain does not resolve, so the project card shows `Site currently offline` rather than a dead link. Add a `url` field to that entry in `site/lib/projects.ts` once it responds, and the link appears automatically.
-3. **Set your real domain.** `metadataBase` in `app/layout.tsx` and the `Sitemap` line in `public/robots.txt` both say `example.com`.
-4. **Write your own posts.** The six posts are real articles on subjects drawn from your CV, written as concrete first-person engineering accounts. They exist so the design is demonstrated with genuine long-form prose rather than lorem ipsum. Read them, edit them, or replace them with writing that is actually yours before publishing.
-5. **Add a sitemap.** There is no `sitemap.ts` yet. With static routes it is a small file if you want one.
-6. **Consider a font.** The stack asks for Satoshi and falls back through General Sans to the system UI font. Adding Satoshi is a two-line change in `globals.css` plus the font files or a hosted link.
-7. **Swap the social card.** `public/brand/og.png` is generated and currently says `example.com` nowhere, so it is safe as-is, but it uses a system font rather than your display face. Regenerate it with `tools/build-brand.mjs` once the real font is in place.
+1. **Add a real portrait and workspace photo.** The hero and About images are currently generated abstract art, not photographs. That was a deliberate choice: a stock photo of an unrelated person would misrepresent who wrote the site, so clearly abstract geometry is the honest placeholder. A real portrait would improve the About page more than anything else. Drop files into `public/brand/` and update the two `src` values in `app/page.tsx` and `app/about/page.tsx`.
+2. **Refresh the project screenshots as the sites change.** They are static captures, so they age. Re-run `node tools/process-shots.mjs` from the repo root after new captures land in `.shots/`.
+3. **Restore the Dwelliva link when the site is back up.** `dwelliva-app.com` currently returns HTTP 402 and the apex domain does not resolve, so the project card shows `Site currently offline` rather than a dead link. Add a `url` field to that entry in `site/lib/projects.ts` once it responds, and the link appears automatically.
+4. **Set your real domain.** `metadataBase` in `app/layout.tsx` and the `Sitemap` line in `public/robots.txt` both say `example.com`.
+5. **Write your own posts.** The six posts are real articles on subjects drawn from your CV, written as concrete first-person engineering accounts. They exist so the design is demonstrated with genuine long-form prose rather than lorem ipsum. Read them, edit them, or replace them with writing that is actually yours before publishing.
+6. **Add a sitemap.** There is no `sitemap.ts` yet. With static routes it is a small file if you want one.
+7. **Consider a font.** The stack asks for Satoshi and falls back through General Sans to the system UI font. Adding Satoshi is a two-line change in `globals.css` plus the font files or a hosted link.
+8. **Swap the social card.** `public/brand/og.png` is generated and currently says `example.com` nowhere, so it is safe as-is, but it uses a system font rather than your display face. Regenerate it with `tools/build-brand.mjs` once the real font is in place.
 
 ## Notes on the build
 

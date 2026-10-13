@@ -16,7 +16,7 @@ const NAV = [
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const [stuck, setStuck] = useState(false);
   const sentinel = useRef<HTMLDivElement>(null);
 

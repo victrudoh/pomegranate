@@ -104,8 +104,8 @@ export default function AboutPage() {
 
         <figure className="m-0 overflow-hidden rounded-[16px] border">
           <Image
-            src="https://picsum.photos/seed/pomegranate-engineer-portrait-desk/760/950"
-            alt="Portrait of the author at a desk"
+            src="/brand/portrait.png"
+            alt="Abstract dot lattice in the brand palette"
             width={760}
             height={950}
             className="h-full w-full object-cover"

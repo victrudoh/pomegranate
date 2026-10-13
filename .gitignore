@@ -22,6 +22,9 @@ dist/
 .notes/
 .zwork/
 .brand-preview/
+.shots/
+site/build-project-art.mjs
+site/process-shots.mjs
 
 # logs
 npm-debug.log*

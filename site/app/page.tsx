@@ -66,8 +66,8 @@ export default function HomePage() {
 
         <figure className="relative m-0 overflow-hidden rounded-[18px] border md:order-none" style={{ boxShadow: 'var(--shadow)' }}>
           <Image
-            src="https://picsum.photos/seed/pomegranate-rind-dark-desk/880/1100"
-            alt="A dimly lit desk with a laptop open to source code"
+            src="/brand/hero.png"
+            alt="Abstract wireframe mesh in the brand palette"
             width={880}
             height={1100}
             priority

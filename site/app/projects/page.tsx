@@ -21,8 +21,8 @@ export default function ProjectsPage() {
           style={{ color: 'var(--muted)' }}
         >
           {projects.length} platforms I have built or maintained, spanning fintech, property,
-          booking, e-commerce and public sector work. Photographs are placeholders standing in for
-          product screenshots.
+          booking, e-commerce and public sector work. Where a project has a live site, the card
+          shows a real screenshot of it. The rest use abstract generated art.
         </p>
       </header>
 

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { BrandMark } from './BrandMark';
 import { SunIcon, MoonIcon } from './Icons';
 
@@ -18,23 +19,37 @@ const NAV = [
  *
  * A full-screen panel rather than a dropdown, because a dropdown of four links
  * is the generic solution and it wastes the one moment where the site has the
- * whole screen. Construction notes:
+ * whole screen.
  *
+ * The overlay is rendered through a portal into #overlay-root at the end of
+ * <body>, NOT inline in the header. That matters: the header uses
+ * backdrop-filter, and a filtered element becomes the containing block for its
+ * fixed-position descendants. Inline, the scrim's `inset: 0` resolved against
+ * the 64px header box instead of the viewport, so it covered almost nothing and
+ * the page underneath stayed clickable. The portal removes the containing block,
+ * which is the actual fix rather than raising a z-index.
+ *
+ * Construction notes:
  *  - The trigger morphs: two rules rotate into a cross. No icon swap, so there
  *    is no flash between two different SVGs.
  *  - Items stagger in with a per-item animation-delay set from the index.
- *  - Both the scrim fade and the panel slide are transform/opacity only.
- *  - Under prefers-reduced-motion the panel appears instantly and the rules
- *    stay put; the menu is still fully usable.
- *  - Escape closes it, the body scroll is locked while open, and focus moves
- *    into the panel so keyboard users are not stranded behind it.
+ *  - Opening locks body scroll and captures pointer events, so the page behind
+ *    cannot be clicked or scrolled.
+ *  - Escape closes it and focus returns to the trigger.
+ *  - Under prefers-reduced-motion the panel appears instantly.
  */
 export function MobileMenu() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [mounted, setMounted] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+
+  // the portal target only exists after hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const current = document.documentElement.getAttribute('data-theme');
@@ -80,26 +95,14 @@ export function MobileMenu() {
     }
   }
 
-  return (
+  /**
+   * The overlay, portalled to body level. Rendered only after mount because the
+   * portal target does not exist during server rendering.
+   */
+  const overlay = (
     <>
-      {/* trigger */}
-      <button
-        ref={triggerRef}
-        onClick={() => setOpen((v) => !v)}
-        aria-label={open ? 'Close menu' : 'Open menu'}
-        aria-expanded={open}
-        aria-controls="mobile-menu"
-        className="relative grid h-[38px] w-[38px] place-items-center rounded-[11px] border transition-colors md:hidden"
-        style={{ borderColor: 'var(--border)' }}
-      >
-        <span className="sr-only">Menu</span>
-        <span aria-hidden="true" className="mm-bars" data-open={open ? '1' : '0'}>
-          <span />
-          <span />
-        </span>
-      </button>
-
-      {/* scrim */}
+      {/* scrim: the full-viewport dim AND the click-catcher. pointer-events is
+          auto only while open, so nothing behind can be reached. */}
       <div
         className="mm-scrim md:hidden"
         data-open={open ? '1' : '0'}
@@ -114,10 +117,10 @@ export function MobileMenu() {
         className="mm-panel md:hidden"
         data-open={open ? '1' : '0'}
         aria-hidden={!open}
-        // React 19 renders inert as a real attribute. It keeps the closed panel
-        // out of the tab order and away from screen readers, which aria-hidden
-        // alone does not do.
         inert={!open}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site menu"
       >
         <div className="mm-head">
           <span className="mono-meta">MENU</span>
@@ -167,6 +170,29 @@ export function MobileMenu() {
           </div>
         </div>
       </div>
+    </>
+  );
+
+  return (
+    <>
+      {/* trigger */}
+      <button
+        ref={triggerRef}
+        onClick={() => setOpen((v) => !v)}
+        aria-label={open ? 'Close menu' : 'Open menu'}
+        aria-expanded={open}
+        aria-controls="mobile-menu"
+        className="relative grid h-[38px] w-[38px] place-items-center rounded-[11px] border transition-colors md:hidden"
+        style={{ borderColor: 'var(--border)' }}
+      >
+        <span className="sr-only">Menu</span>
+        <span aria-hidden="true" className="mm-bars" data-open={open ? '1' : '0'}>
+          <span />
+          <span />
+        </span>
+      </button>
+
+      {mounted && createPortal(overlay, document.getElementById('overlay-root') ?? document.body)}
     </>
   );
 }

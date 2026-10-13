@@ -7,6 +7,9 @@ import { SpotlightCard } from './SpotlightCard';
  * The live-site line on a project. Rendered as a real link when one exists, and
  * as a plain note when the site is not reachable, so the page never ships a
  * dead link or implies a project is deployed when it is not.
+ *
+ * Where a link exists, the card image above is a real screenshot of that site,
+ * so the visual and the link agree.
  */
 function ProjectLink({ project }: { project: Project }) {
   if (project.url) {
@@ -77,11 +80,11 @@ export function ProjectCard({
           >
             <Image
               src={project.image}
-              alt={`${project.name} context photograph`}
+              alt={project.imageAlt}
               width={1200}
-              height={800}
+              height={675}
               className="h-full min-h-[250px] w-full object-cover"
-              style={{ filter: 'saturate(0.8) contrast(1.03)' }}
+              style={{ filter: 'saturate(0.92) contrast(1.02)' }}
             />
           </div>
         </div>
@@ -98,11 +101,11 @@ export function ProjectCard({
         >
           <Image
             src={project.image}
-            alt={`${project.name} context photograph`}
-            width={800}
-            height={450}
+            alt={project.imageAlt}
+            width={1200}
+            height={675}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
-            style={{ filter: 'saturate(0.8) contrast(1.03)' }}
+            style={{ filter: 'saturate(0.92) contrast(1.02)' }}
           />
         </div>
         <div className="flex flex-1 flex-col gap-2.5 p-5">

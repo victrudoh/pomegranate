@@ -543,16 +543,47 @@ html[data-theme='light'] {
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: color-mix(in oklab, var(--bg-deep) 78%, transparent);
-  backdrop-filter: blur(6px);
+  /* Blurs and dims everything behind the menu. This works now that the scrim is
+     portalled to body level: inside the blurred header it was trapped in the
+     header's containing block and only ever covered the 64px bar. */
+  background: color-mix(in oklab, var(--bg-deep) 62%, transparent);
+  /* Standard property only. The build (Lightning CSS) adds the -webkit- prefix
+     automatically for the browser targets. Declaring the prefix by hand caused
+     the minifier to drop the standard property, which would have left Firefox
+     with no blur at all. */
+  backdrop-filter: blur(14px) saturate(120%);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.34s ease;
+  /* tapping the dimmed area closes the menu */
+  cursor: pointer;
 }
 
 .mm-scrim[data-open='1'] {
   opacity: 1;
+  /* captures every click, so the page behind cannot be interacted with */
   pointer-events: auto;
+}
+
+/* A browser without backdrop-filter would show only the translucent dim, which
+   is a weaker but still legible separation. Bump the dim so the page behind
+   stays clearly out of reach. */
+@supports not (backdrop-filter: blur(4px)) {
+  .mm-scrim[data-open='1'] {
+    background: color-mix(in oklab, var(--bg-deep) 88%, transparent);
+  }
+}
+
+/* Respect a system-level request for less transparency: drop the blur and use a
+   near-opaque ground instead, which still separates the menu from the page. */
+@media (prefers-reduced-transparency: reduce) {
+  .mm-scrim {
+    backdrop-filter: none;
+  }
+
+  .mm-scrim[data-open='1'] {
+    background: color-mix(in oklab, var(--bg-deep) 94%, transparent);
+  }
 }
 
 .mm-panel {
