@@ -27,6 +27,15 @@
   --radius-pill: 999px;
 }
 
+/* Brand constants. These are the only fixed colours outside the theme, because
+   the favicon cannot follow the theme: it has to read on both light and dark
+   browser chrome, so it always uses the deep rind ground with a cream mark. */
+:root {
+  --brand-rind: #8e2839;
+  --brand-mark: #b02a3d;
+  --brand-cream: #f6ece7;
+}
+
 /* ── dark (default) ─────────────────────────────────────────────────── */
 :root,
 html[data-theme='dark'] {
@@ -480,6 +489,264 @@ html[data-theme='light'] {
   .card-glow:hover,
   .post-row:hover .post-title {
     transform: none;
+  }
+}
+
+/* ── mobile menu ───────────────────────────────────────────────────────
+   Full-screen panel. Transform and opacity only, so nothing here triggers
+   layout. The trigger morphs in place: two rules rotate into a cross rather
+   than swapping between two icons, which removes the flash you get from
+   unmounting one SVG and mounting another. */
+.mm-bars {
+  position: relative;
+  display: block;
+  width: 17px;
+  height: 12px;
+}
+
+.mm-bars span {
+  position: absolute;
+  left: 0;
+  width: 17px;
+  height: 1.8px;
+  border-radius: 2px;
+  background: currentColor;
+  transition:
+    transform 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mm-bars span:nth-child(1) {
+  top: 2.2px;
+}
+
+.mm-bars span:nth-child(2) {
+  top: 8.2px;
+  width: 12px;
+}
+
+/* hover: the short rule grows to full width, a small hint that this opens */
+.mm-bars[data-open='0']:hover span:nth-child(2) {
+  width: 17px;
+}
+
+.mm-bars[data-open='1'] span:nth-child(1) {
+  transform: translateY(3px) rotate(45deg);
+}
+
+.mm-bars[data-open='1'] span:nth-child(2) {
+  width: 17px;
+  transform: translateY(-3px) rotate(-45deg);
+}
+
+.mm-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: color-mix(in oklab, var(--bg-deep) 78%, transparent);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.34s ease;
+}
+
+.mm-scrim[data-open='1'] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mm-panel {
+  position: fixed;
+  inset: 56px 10px auto 10px;
+  z-index: 55;
+  max-height: calc(100dvh - 76px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--bg-deep);
+  box-shadow: var(--shadow);
+  padding: 18px 18px 20px;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.985);
+  transform-origin: 100% 0;
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mm-panel[data-open='1'] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.mm-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mm-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px 5px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 12.5px;
+  color: var(--muted);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.mm-theme:hover {
+  color: var(--fg);
+  border-color: var(--border-strong);
+}
+
+/* items stagger in. Each one carries its own delay from the component. */
+.mm-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 12px;
+  border-radius: 13px;
+  border: 1px solid transparent;
+  transition:
+    background 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.mm-panel[data-open='1'] .mm-item {
+  animation: mm-in 0.44s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes mm-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.mm-item:hover,
+.mm-item:focus-visible {
+  background: color-mix(in oklab, var(--surface) 80%, transparent);
+  border-color: var(--border);
+}
+
+.mm-item[data-active='1'] {
+  background: color-mix(in oklab, var(--accent) 9%, transparent);
+  border-color: color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+.mm-index {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--faint);
+  align-self: flex-start;
+  padding-top: 3px;
+}
+
+.mm-item[data-active='1'] .mm-index {
+  color: var(--accent);
+}
+
+.mm-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.mm-label {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+}
+
+.mm-note {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.mm-arrow {
+  color: var(--faint);
+  opacity: 0;
+  transform: translateX(-5px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mm-arrow svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+}
+
+.mm-item:hover .mm-arrow,
+.mm-item:focus-visible .mm-arrow {
+  opacity: 1;
+  transform: none;
+}
+
+.mm-foot {
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mm-cta {
+  display: block;
+  text-align: center;
+  padding: 13px 18px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 500;
+  background: var(--accent);
+  color: var(--on-accent);
+  transition:
+    transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease;
+}
+
+.mm-cta:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 8px 22px color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+.mm-mark {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  justify-content: center;
+}
+
+/* keep the panel from animating at all when motion is reduced */
+@media (prefers-reduced-motion: reduce) {
+  .mm-panel,
+  .mm-scrim,
+  .mm-bars span,
+  .mm-arrow,
+  .mm-cta {
+    transition: none;
+  }
+
+  .mm-panel[data-open='1'] .mm-item {
+    animation: none;
   }
 }
 

@@ -108,12 +108,52 @@ They are reachable three ways: a `Download CV` button in the hero, a `CV` item i
 
 To replace them, overwrite the two PDFs and update the file sizes shown in `components/CvDownloads.tsx`. Nothing else references them.
 
+## The brand mark and favicon
+
+One mark, generated from a single geometry definition in `tools/build-brand.mjs`, so the React component, the favicon and the social card can never drift apart.
+
+**The mark is deliberately a pure silhouette:** a rounded body with a bold three-point crown (the calyx, the tuft on top of a real pomegranate). The design process tested four rounds of candidates and rasterised each at true pixel size, then magnified it with nearest-neighbour so the result could be judged rather than guessed. Two findings drove the final shape:
+
+1. Interior seed detail blurs into an unreadable smudge below roughly 24px, and 16px is the size that actually matters in a browser tab. Every seed-based variant failed there.
+2. The crown is the only feature that distinguishes a pomegranate from a generic berry, so it was made large enough to survive a 16px render.
+
+Two candidate variants were rejected because at 32px their two minimal marks read as a face. That is not a risk worth shipping in a favicon.
+
+| Asset | Size | Why it exists |
+| --- | --- | --- |
+| `app/icon.svg` | scalable | The primary favicon. Transparent, so it sits on any browser chrome. |
+| `app/icon.png` | 512px | Raster fallback, cream mark on a crimson tile. |
+| `app/apple-icon.png` | 180px | iOS home screen. Square, because iOS applies its own mask. |
+| `app/favicon.ico` | 16 / 32 / 48 | Multi-size ICO, written by hand since sharp cannot emit ICO. |
+| `public/brand/og.png` | 1200x630 | Social card, dark, mark locked up beside the wordmark. |
+
+Regenerate everything after changing the geometry, running from `site/`:
+
+```bash
+cp ../tools/build-brand.mjs ./ && node build-brand.mjs
+```
+
+The favicon is intentionally **not** theme-aware. It always uses the deep rind ground with a cream mark, because a favicon is displayed on browser chrome the site does not control, and it has to read on both light and dark tabs.
+
+## The mobile menu
+
+A full-screen panel rather than a dropdown. A dropdown of four links is the generic answer and it wastes the one moment where the site has the whole screen.
+
+- **The trigger morphs in place.** Two rules rotate into a cross, so there is no flash between unmounting one icon and mounting another.
+- **Items stagger in,** each with its own `animation-delay` derived from its index.
+- **Current section is marked** with an accent tint and an accent index number.
+- **Full keyboard support.** Escape closes and returns focus to the trigger, focus moves into the panel on open, body scroll locks while open, and the closed panel carries `inert` so it stays out of the tab order.
+- **Reduced motion is honoured.** The panel appears instantly and the rules stay put.
+
+The prototype in `prototypes/` carries the same panel for the same reason.
+
 ## Interactions
 
 The site was built so that nothing here is required to read it. Every effect is additive.
 
 | Effect | Where | How |
 | --- | --- | --- |
+| Mobile menu panel | Under 768px | Full-screen panel, morphing trigger |
 | Reading progress bar | Top of every page | CSS `animation-timeline: scroll(root)` |
 | Header elevation | On scroll | IntersectionObserver sentinel |
 | Cursor-tracking glow | Project cards | Pointer position written to CSS vars via ref |
@@ -139,6 +179,7 @@ The cursor glow is also skipped for coarse pointers, so touch devices never run 
 4. **Write your own posts.** The six posts are real articles on subjects drawn from your CV, written as concrete first-person engineering accounts. They exist so the design is demonstrated with genuine long-form prose rather than lorem ipsum. Read them, edit them, or replace them with writing that is actually yours before publishing.
 5. **Add a sitemap.** There is no `sitemap.ts` yet. With static routes it is a small file if you want one.
 6. **Consider a font.** The stack asks for Satoshi and falls back through General Sans to the system UI font. Adding Satoshi is a two-line change in `globals.css` plus the font files or a hosted link.
+7. **Swap the social card.** `public/brand/og.png` is generated and currently says `example.com` nowhere, so it is safe as-is, but it uses a system font rather than your display face. Regenerate it with `tools/build-brand.mjs` once the real font is in place.
 
 ## Notes on the build
 

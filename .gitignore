@@ -21,6 +21,7 @@ dist/
 *.tsbuildinfo
 .notes/
 .zwork/
+.brand-preview/
 
 # logs
 npm-debug.log*
