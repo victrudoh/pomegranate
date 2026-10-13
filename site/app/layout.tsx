@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
+import { ReadingProgress } from '@/components/ReadingProgress';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://example.com'),
@@ -15,6 +16,16 @@ export const metadata: Metadata = {
     title: 'pomegranate',
     description: 'Writing about web systems, from the database down to the pixel.',
     type: 'website',
+  },
+  // The CVs are the strongest thing a hiring reader wants, so they are
+  // discoverable from the head as well as linked in the nav.
+  alternates: {
+    types: {
+      'application/pdf': [
+        { url: '/cv/victory-udoh-cv-frontend-2026.pdf', title: 'CV, frontend focused' },
+        { url: '/cv/victory-udoh-cv-backend-2026.pdf', title: 'CV, backend focused' },
+      ],
+    },
   },
 };
 
@@ -37,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="min-h-screen flex flex-col">
+        <ReadingProgress />
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />

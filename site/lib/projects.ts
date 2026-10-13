@@ -15,6 +15,10 @@ export type Project = {
   stack: string[];
   image: string;
   featured?: boolean;
+  /** Live site, checked and reachable. Omitted when the project is not public. */
+  url?: string;
+  /** Shown instead of a link when a public site is not currently reachable. */
+  note?: string;
 };
 
 export const projects: Project[] = [
@@ -31,6 +35,7 @@ export const projects: Project[] = [
     stack: ['React', 'TypeScript', 'Dashboards', 'Payments'],
     image: 'https://picsum.photos/seed/pomegranate-pos-terminal-counter/1200/800',
     featured: true,
+    url: 'https://pxnapp.com',
   },
   {
     slug: 'pxn-commerce-dashboard',
@@ -57,6 +62,10 @@ export const projects: Project[] = [
       'Reusable components across the whole surface, so a change to a wallet card reached every screen at once. Consistency between the customer view and the admin view was the main constraint.',
     stack: ['Next.js', 'TypeScript'],
     image: 'https://picsum.photos/seed/pomegranate-property-apartment/800/450',
+    // dwelliva-app.com currently returns HTTP 402 and the apex does not resolve,
+    // so no link is shown rather than shipping a dead one. Restore it here when
+    // the site is back up.
+    note: 'Site currently offline',
   },
   {
     slug: 'talmow',
@@ -83,6 +92,7 @@ export const projects: Project[] = [
       'Authentication, authorization and booking workflows, plus the unglamorous work of finding the slow endpoints and fixing them before they became complaints.',
     stack: ['NestJS', 'PostgreSQL', 'REST'],
     image: 'https://picsum.photos/seed/pomegranate-booking-lobby/800/450',
+    url: 'https://ibookam.com',
   },
   {
     slug: 'discount-hub',
@@ -108,6 +118,7 @@ export const projects: Project[] = [
       'Accessibility and load time were requirements rather than polish. That meant load budgets, image discipline and progressive enhancement instead of a large client bundle.',
     stack: ['Performance', 'Accessibility'],
     image: 'https://picsum.photos/seed/pomegranate-highland-plateau/800/450',
+    url: 'https://www.plateaustate.gov.ng',
   },
   {
     slug: 'nesco-nigeria',
@@ -120,6 +131,7 @@ export const projects: Project[] = [
       'The work was mostly information architecture: restructuring their content so a procurement officer could find capability and contact details without running a search.',
     stack: ['Next.js', 'Content'],
     image: 'https://picsum.photos/seed/pomegranate-institution-building/800/450',
+    url: 'https://www.nesconigeria.com',
   },
 ];
 

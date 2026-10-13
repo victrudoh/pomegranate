@@ -6,6 +6,7 @@ import { PostRow } from '@/components/PostRow';
 import { ArrowRight } from '@/components/Icons';
 import { ProjectCard } from '@/components/ProjectCard';
 import { ContactLinks } from '@/components/ContactLinks';
+import { CvDownloads } from '@/components/CvDownloads';
 
 const STACK = [
   ['LANGUAGE', 'TypeScript, JavaScript, Python'],
@@ -43,19 +44,23 @@ export default function HomePage() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/writing"
-              className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[15px] font-medium whitespace-nowrap transition-colors"
+              className="btn-lift btn-glow inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[15px] font-medium whitespace-nowrap"
               style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}
             >
               Read the writing
             </Link>
-            <Link
-              href="/projects"
-              className="group inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-[15px] font-medium whitespace-nowrap transition-colors hover:text-[var(--accent)]"
+            <a
+              href="/cv/victory-udoh-cv-frontend-2026.pdf"
+              download
+              className="btn-lift group inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-[15px] font-medium whitespace-nowrap hover:text-[var(--accent)]"
               style={{ borderColor: 'var(--border-btn)' }}
             >
-              See the work
-              <ArrowRight className="transition-transform group-hover:translate-x-0.5" />
-            </Link>
+              Download CV
+              <ArrowRight
+                size={16}
+                className="rotate-90 transition-transform group-hover:translate-y-0.5"
+              />
+            </a>
           </div>
         </div>
 
@@ -149,7 +154,7 @@ export default function HomePage() {
             {STACK.map(([label, value]) => (
               <div
                 key={label}
-                className="flex flex-col gap-1 rounded-xl border px-4 py-3.5"
+                className="tile-lift flex flex-col gap-1 rounded-xl border px-4 py-3.5"
                 style={{ background: 'var(--surface)' }}
               >
                 <span
@@ -204,6 +209,23 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* CV */}
+      <section className="border-t py-16 md:py-24">
+        <div className="wrap">
+          <div className="mb-10 grid items-end gap-4 md:mb-14 md:grid-cols-2 md:gap-8">
+            <h2 className="text-[clamp(26px,3.3vw,40px)] leading-tight tracking-[-0.022em]">CV</h2>
+            <p
+              className="max-w-[60ch] text-[clamp(17px,1.5vw,20px)] leading-relaxed"
+              style={{ color: 'var(--muted)' }}
+            >
+              Two versions, because they lead with different work. The frontend one covers the
+              interface and product side; the backend one leads with architecture, APIs and data.
+            </p>
+          </div>
+          <CvDownloads />
+        </div>
+      </section>
+
       {/* CONTACT */}
       <section className="border-t py-16 md:py-24">
         <div className="wrap grid gap-8 md:grid-cols-2 md:gap-16">
@@ -219,8 +241,8 @@ export default function HomePage() {
               properly. If you found an error in something I wrote, tell me and I will correct it.
             </p>
             <a
-              href="mailto:victrudoh@gmail.com"
-              className="mt-7 inline-flex items-center rounded-full px-5 py-2.5 text-[15px] font-medium whitespace-nowrap"
+                href="mailto:victrudoh@gmail.com"
+              className="btn-lift btn-glow mt-7 inline-flex items-center rounded-full px-5 py-2.5 text-[15px] font-medium whitespace-nowrap"
               style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}
             >
               victrudoh@gmail.com

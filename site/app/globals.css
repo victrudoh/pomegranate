@@ -262,6 +262,227 @@ html[data-theme='light'] {
   color: #7fb3d9;
 }
 
+/* ── interaction layer ────────────────────────────────────────────────
+   Everything here is either a hover/focus transition, a transform, or a
+   scroll-driven CSS animation. There are no scroll event listeners: the
+   progress bar reads scroll position through animation-timeline, and the
+   nav elevation uses an IntersectionObserver sentinel. */
+.progress-bar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  z-index: 40;
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .progress-bar {
+      animation: pg-progress linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+
+@keyframes pg-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* anchors clear the sticky header */
+[id] {
+  scroll-margin-top: 84px;
+}
+
+/* button lift, driven by transform only */
+.btn-lift {
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease;
+}
+
+.btn-lift:hover {
+  transform: translateY(-1.5px);
+}
+
+.btn-lift:active {
+  transform: translateY(0);
+}
+
+.btn-glow:hover {
+  box-shadow: 0 8px 22px color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+/* project card: glow that follows the cursor, plus a square lift */
+.card-glow {
+  position: relative;
+}
+
+.card-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(
+    340px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in oklab, var(--accent) 15%, transparent),
+    transparent 62%
+  );
+}
+
+.card-glow:hover::after {
+  opacity: 1;
+}
+
+/* post row: an accent rule grows from the top, title shifts right */
+.post-row {
+  position: relative;
+}
+
+.post-row::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 26px;
+  bottom: 26px;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.post-row:hover::before {
+  transform: scaleY(1);
+}
+
+.post-title {
+  transition:
+    color 0.25s ease,
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.post-row:hover .post-title {
+  transform: translateX(3px);
+}
+
+/* external project link */
+.project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  color: var(--muted);
+  transition:
+    color 0.2s ease,
+    gap 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-link:hover {
+  color: var(--accent);
+  gap: 9px;
+}
+
+/* CV download cards */
+.cv-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 18px;
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cv-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.cv-card:active {
+  transform: translateY(0);
+}
+
+.cv-card .cv-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--accent);
+}
+
+.cv-card .cv-download {
+  margin-left: auto;
+  color: var(--faint);
+  transition:
+    color 0.25s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cv-card:hover .cv-download {
+  color: var(--accent);
+  transform: translateY(2px);
+}
+
+/* stack chips and fact tiles acknowledge the pointer */
+.tile-lift {
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tile-lift:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+
+/* contact row: slide right and reveal the arrow */
+.contact-row {
+  transition:
+    padding-left 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.2s ease;
+}
+
+.contact-row:hover {
+  padding-left: 1.5px;
+  color: var(--accent);
+}
+
+/* temporary confirmation state for copy-to-clipboard */
+.copied {
+  color: var(--accent) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-lift:hover,
+  .cv-card:hover,
+  .tile-lift:hover,
+  .card-glow:hover,
+  .post-row:hover .post-title {
+    transform: none;
+  }
+}
+
 /* ── entrance motion, gated so the first frame is readable without JS ─ */
 @keyframes pg-rise {
   from {

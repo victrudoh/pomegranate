@@ -10,7 +10,7 @@ export function PostRow({ post }: { post: Post }) {
   return (
     <Link
       href={`/writing/${post.slug}`}
-      className="group grid gap-3 border-b py-6 transition-colors md:grid-cols-[132px_minmax(0,1fr)_190px] md:gap-7"
+      className="post-row group grid gap-3 border-b py-6 transition-colors md:grid-cols-[132px_minmax(0,1fr)_190px] md:gap-7"
       style={{ borderColor: 'var(--border)' }}
     >
       <span className="mono-meta md:whitespace-pre-line">
@@ -21,7 +21,7 @@ export function PostRow({ post }: { post: Post }) {
 
       <div>
         <h3
-          className="text-[clamp(19px,2vw,23px)] leading-snug font-semibold tracking-tight transition-colors group-hover:text-[var(--accent)]"
+          className="post-title text-[clamp(19px,2vw,23px)] leading-snug font-semibold tracking-tight group-hover:text-[var(--accent)]"
           style={{ marginBottom: 7 }}
         >
           {post.title}

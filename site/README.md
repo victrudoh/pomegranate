@@ -91,18 +91,54 @@ site/
 │   └── not-found.tsx           404
 ├── components/                 header, footer, icons, cards, prose renderer
 ├── content/writing/            markdown posts
+├── public/cv/                  the two CV PDFs
 └── lib/
     ├── posts.ts                reads and validates markdown
     └── projects.ts             the project archive as data
 ```
 
+## The CV
+
+Both PDFs live in `site/public/cv/` and are served as static files, so the downloads work with JavaScript disabled:
+
+- `victory-udoh-cv-frontend-2026.pdf`
+- `victory-udoh-cv-backend-2026.pdf`
+
+They are reachable three ways: a `Download CV` button in the hero, a `CV` item in the main navigation, and a full `/cv` page. The files are also declared as `<link rel="alternate" type="application/pdf">` in the document head, which some CV parsers and browser extensions pick up.
+
+To replace them, overwrite the two PDFs and update the file sizes shown in `components/CvDownloads.tsx`. Nothing else references them.
+
+## Interactions
+
+The site was built so that nothing here is required to read it. Every effect is additive.
+
+| Effect | Where | How |
+| --- | --- | --- |
+| Reading progress bar | Top of every page | CSS `animation-timeline: scroll(root)` |
+| Header elevation | On scroll | IntersectionObserver sentinel |
+| Cursor-tracking glow | Project cards | Pointer position written to CSS vars via ref |
+| Accent rule reveal | Writing index rows | `transform: scaleY()` on hover |
+| Button lift and glow | Primary CTAs | `transform: translateY()` and box-shadow |
+| Tile lift | Stack chips, fact tiles | `transform: translateY()` |
+| Click to copy | Contact rows | `navigator.clipboard`, falls back to the plain link |
+| Entrance rise | Hero | CSS `@keyframes` on load, no scroll trigger |
+
+Three rules hold across all of it:
+
+1. **No scroll event listeners.** Progress uses a scroll-driven CSS animation, the header uses an IntersectionObserver sentinel, and the card glow coalesces to one write per frame with `requestAnimationFrame`.
+2. **Only `transform` and `opacity` are animated.** Nothing animates `top`, `left`, `width` or `height`, so there is no layout thrash.
+3. **Everything collapses under `prefers-reduced-motion: reduce`.** The progress bar is not drawn, the glow is not attached, and transforms are disabled.
+
+The cursor glow is also skipped for coarse pointers, so touch devices never run that code.
+
 ## Before you deploy
 
 1. **Replace the photographs.** Every image is a placeholder from `picsum.photos`, seeded so it stays stable. They are not your products. Real screenshots of PXN, Dwelliva and Talmow will lift this more than any other single change. Swap the `image` fields in `site/lib/projects.ts` and the three image URLs in `page.tsx` and `about/page.tsx`.
-2. **Set your real domain.** `metadataBase` in `app/layout.tsx` and the `Sitemap` line in `public/robots.txt` both say `example.com`.
-3. **Write your own posts.** The six posts are real articles on subjects drawn from your CV, written as concrete first-person engineering accounts. They exist so the design is demonstrated with genuine long-form prose rather than lorem ipsum. Read them, edit them, or replace them with writing that is actually yours before publishing.
-4. **Add a sitemap.** There is no `sitemap.ts` yet. With static routes it is a small file if you want one.
-5. **Consider a font.** The stack asks for Satoshi and falls back through General Sans to the system UI font. Adding Satoshi is a two-line change in `globals.css` plus the font files or a hosted link.
+2. **Restore the Dwelliva link when the site is back up.** `dwelliva-app.com` currently returns HTTP 402 and the apex domain does not resolve, so the project card shows `Site currently offline` rather than a dead link. Add a `url` field to that entry in `site/lib/projects.ts` once it responds, and the link appears automatically.
+3. **Set your real domain.** `metadataBase` in `app/layout.tsx` and the `Sitemap` line in `public/robots.txt` both say `example.com`.
+4. **Write your own posts.** The six posts are real articles on subjects drawn from your CV, written as concrete first-person engineering accounts. They exist so the design is demonstrated with genuine long-form prose rather than lorem ipsum. Read them, edit them, or replace them with writing that is actually yours before publishing.
+5. **Add a sitemap.** There is no `sitemap.ts` yet. With static routes it is a small file if you want one.
+6. **Consider a font.** The stack asks for Satoshi and falls back through General Sans to the system UI font. Adding Satoshi is a two-line change in `globals.css` plus the font files or a hosted link.
 
 ## Notes on the build
 

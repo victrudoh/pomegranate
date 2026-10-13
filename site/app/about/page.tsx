@@ -92,7 +92,7 @@ export default function AboutPage() {
             {FACTS.map(([label, value]) => (
               <div
                 key={label}
-                className="rounded-xl border px-4 py-3.5"
+                className="tile-lift rounded-xl border px-4 py-3.5"
                 style={{ background: 'var(--surface)' }}
               >
                 <span className="mono-meta block">{label}</span>
@@ -147,7 +147,7 @@ export default function AboutPage() {
           </p>
           <a
             href="mailto:victrudoh@gmail.com"
-            className="mt-6 inline-flex items-center rounded-full px-5 py-2.5 text-[15px] font-medium whitespace-nowrap"
+            className="btn-lift btn-glow mt-6 inline-flex items-center rounded-full px-5 py-2.5 text-[15px] font-medium whitespace-nowrap"
             style={{ background: 'var(--accent)', color: 'var(--on-accent)' }}
           >
             victrudoh@gmail.com

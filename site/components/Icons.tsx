@@ -85,3 +85,42 @@ export function ArrowRight({ size = 16, className }: IconProps) {
     </svg>
   );
 }
+
+export function DownloadIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M12 3v12M7 10l5 5 5-5M4 21h16" />
+    </svg>
+  );
+}
+
+export function ExternalLinkIcon({ size = 13, className }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+      <path d="M15 3h6v6" />
+      <path d="M10 14 21 3" />
+    </svg>
+  );
+}
+
+/** A document sheet, for the frontend CV. */
+export function FileTextIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <rect x="3" y="4" width="18" height="14" rx="2" />
+      <path d="M8 21h8M12 18v3M7 9h6M7 12.5h9" />
+    </svg>
+  );
+}
+
+/** A database cylinder, for the backend CV. */
+export function DatabaseIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <ellipse cx="12" cy="6" rx="8" ry="3" />
+      <path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6" />
+      <path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />
+    </svg>
+  );
+}

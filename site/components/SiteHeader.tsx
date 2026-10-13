@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BrandMark } from './BrandMark';
 import { MenuIcon, CloseIcon, SunIcon, MoonIcon } from './Icons';
 
@@ -10,16 +10,32 @@ const NAV = [
   { href: '/writing', label: 'Writing' },
   { href: '/projects', label: 'Projects' },
   { href: '/about', label: 'About' },
+  { href: '/cv', label: 'CV' },
 ];
 
 export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [stuck, setStuck] = useState(false);
+  const sentinel = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const current = document.documentElement.getAttribute('data-theme');
     if (current === 'light' || current === 'dark') setTheme(current);
+  }, []);
+
+  // Raise the header once the page has scrolled. An IntersectionObserver
+  // sentinel is used instead of a scroll listener so nothing runs per frame.
+  useEffect(() => {
+    const node = sentinel.current;
+    if (!node || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setStuck(!entry.isIntersecting),
+      { threshold: 1 },
+    );
+    io.observe(node);
+    return () => io.disconnect();
   }, []);
 
   // close the mobile panel on navigation
@@ -39,14 +55,19 @@ export function SiteHeader() {
   }
 
   return (
-    <header
-      className="sticky top-0 z-30 border-b backdrop-blur-md"
-      style={{ background: 'color-mix(in oklab, var(--bg) 84%, transparent)' }}
-    >
+    <>
+      <div ref={sentinel} aria-hidden="true" className="absolute top-0 h-px w-px" />
+      <header
+        className="sticky top-0 z-30 border-b backdrop-blur-md transition-shadow"
+        style={{
+          background: 'color-mix(in oklab, var(--bg) 84%, transparent)',
+          boxShadow: stuck ? '0 10px 30px rgb(0 0 0 / 0.22)' : 'none',
+        }}
+      >
       <div className="wrap flex items-center justify-between gap-6 min-h-16">
         <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight">
           <BrandMark />
-          pomegranate
+          <span className="transition-colors hover:text-[var(--accent)]">pomegranate</span>
         </Link>
 
         <nav
@@ -83,7 +104,7 @@ export function SiteHeader() {
           <button
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-            className="grid h-[34px] w-[34px] place-items-center rounded-[9px] border transition-colors hover:text-[var(--fg)]"
+            className="grid h-[34px] w-[34px] place-items-center rounded-[9px] border transition-all hover:-translate-y-px hover:text-[var(--fg)] active:translate-y-0"
             style={{ color: 'var(--muted)' }}
           >
             {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
@@ -92,13 +113,14 @@ export function SiteHeader() {
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? 'Close navigation' : 'Open navigation'}
             aria-expanded={open}
-            className="grid h-[34px] w-[34px] place-items-center rounded-[9px] border md:hidden"
+            className="grid h-[34px] w-[34px] place-items-center rounded-[9px] border transition-colors md:hidden"
             style={{ color: 'var(--muted)' }}
           >
             {open ? <CloseIcon /> : <MenuIcon />}
           </button>
         </div>
       </div>
-    </header>
+      </header>
+    </>
   );
 }
