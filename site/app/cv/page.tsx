@@ -5,7 +5,21 @@ import { ContactLinks } from '@/components/ContactLinks';
 export const metadata: Metadata = {
   title: 'CV',
   description:
-    'Download Victory Andrew Udoh\u2019s CV: frontend focused and backend focused versions, both current for 2026.',
+    "Download Victory Andrew Udoh's CV: frontend focused and backend focused versions, both current for 2026.",
+  alternates: { canonical: '/cv' },
+  openGraph: {
+    type: 'website',
+    url: '/cv',
+    title: 'CV',
+    description:
+      "Download Victory Andrew Udoh's CV: frontend focused and backend focused versions, both current for 2026.",
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CV',
+    description:
+      "Download Victory Andrew Udoh's CV: frontend focused and backend focused versions, both current for 2026.",
+  },
 };
 
 const HIGHLIGHTS = [

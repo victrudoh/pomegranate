@@ -3,6 +3,9 @@ title: Stop fetching in a useEffect and calling it architecture
 date: 2026-08-29
 summary: React Query replaced half of our state management and quietly caused the other half. A concrete pattern for separating server state from UI state in a large dashboard.
 tags: [React, State, Performance]
+hero: /writing/react-query-and-state.png
+heroAlt: Abstract concentric arcs radiating from one centre, in the brand palette
+heroCaption: Generated art for this post. One source of truth with more than one thing reading from it.
 ---
 
 We adopted React Query to delete a pile of loading booleans, and for two months it looked like a clean win. Then the dashboard grew a filter bar, and we discovered we had simply moved the problem.

@@ -16,6 +16,15 @@ export type Post = {
   tags: string[];
   readingMinutes: number;
   body: string;
+  /**
+   * Optional hero image, path relative to the site root (for example
+   * /writing/gods-eye-view.jpg). Frontmatter key: hero.
+   */
+  hero?: string;
+  /** Alt text for the hero. Required in practice whenever hero is set. */
+  heroAlt?: string;
+  /** Optional caption, shown under the hero. Also used for attribution. */
+  heroCaption?: string;
 };
 
 const DIR = path.join(process.cwd(), 'content', 'writing');
@@ -59,6 +68,9 @@ function readOne(file: string): Post {
     tags: Array.isArray(data.tags) ? (data.tags as string[]) : [],
     // measured from the actual text, not guessed
     readingMinutes: Math.max(1, Math.round(words / 220)),
+    hero: typeof data.hero === 'string' ? data.hero : undefined,
+    heroAlt: typeof data.heroAlt === 'string' ? data.heroAlt : undefined,
+    heroCaption: typeof data.heroCaption === 'string' ? data.heroCaption : undefined,
     body: content,
   };
 }

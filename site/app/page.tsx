@@ -49,9 +49,10 @@ export default function HomePage() {
             >
               Read the writing
             </Link>
+            {/* Scrolls to the CV section below, where both PDFs live. It does not
+                download a file directly, so a reader can choose which CV fits. */}
             <a
-              href="/cv/victory-udoh-cv-frontend-2026.pdf"
-              download
+              href="#cv"
               className="btn-lift group inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-[15px] font-medium whitespace-nowrap hover:text-[var(--accent)]"
               style={{ borderColor: 'var(--border-btn)' }}
             >
@@ -209,8 +210,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CV */}
-      <section className="border-t py-16 md:py-24">
+      {/* CV. The hero button targets this id, and the header's anchor offset
+          rule in globals.css keeps the heading clear of the sticky nav. */}
+      <section id="cv" className="border-t py-16 md:py-24">
         <div className="wrap">
           <div className="mb-10 grid items-end gap-4 md:mb-14 md:grid-cols-2 md:gap-8">
             <h2 className="text-[clamp(26px,3.3vw,40px)] leading-tight tracking-[-0.022em]">CV</h2>

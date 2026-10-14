@@ -3,19 +3,54 @@ import './globals.css';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { ReadingProgress } from '@/components/ReadingProgress';
+import { StructuredData } from '@/components/StructuredData';
+import { SITE } from '@/lib/site';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://example.com'),
+  // Every relative URL in metadata resolves against this, which is what makes
+  // share previews work: WhatsApp, Slack and X all require absolute image URLs
+  // and silently show no preview when given a relative one.
+  metadataBase: new URL(SITE.url),
   title: {
-    default: 'pomegranate · Victory Udoh writes about systems',
+    default: SITE.title,
     template: '%s · pomegranate',
   },
-  description:
-    'Writing about web systems, from the database down to the pixel. Notes from building fintech, property and government platforms.',
+  description: SITE.description,
+  applicationName: SITE.name,
+  authors: [{ name: SITE.author.name, url: SITE.author.github }],
+  creator: SITE.author.name,
+  publisher: SITE.author.name,
+  keywords: [
+    'Victory Udoh',
+    'software engineer',
+    'technical writing',
+    'full stack developer',
+    'NestJS',
+    'PostgreSQL',
+    'React',
+    'TypeScript',
+    'Nigeria',
+  ],
+  // A canonical on every page. Without this, / and /index can be indexed as
+  // two separate pages and split whatever ranking the site earns.
+  alternates: {
+    canonical: '/',
+    types: {
+      // The CVs are the strongest thing a hiring reader wants, so they are
+      // declared as alternates as well as linked in the nav.
+      'application/pdf': [
+        { url: '/cv/victory-udoh-cv-frontend-2026.pdf', title: 'CV, frontend focused' },
+        { url: '/cv/victory-udoh-cv-backend-2026.pdf', title: 'CV, backend focused' },
+      ],
+    },
+  },
   openGraph: {
-    title: 'pomegranate',
-    description: 'Writing about web systems, from the database down to the pixel.',
     type: 'website',
+    siteName: SITE.name,
+    locale: SITE.locale,
+    url: '/',
+    title: SITE.title,
+    description: SITE.description,
     images: [
       {
         url: '/brand/og.png',
@@ -25,15 +60,11 @@ export const metadata: Metadata = {
       },
     ],
   },
-  // The CVs are the strongest thing a hiring reader wants, so they are
-  // discoverable from the head as well as linked in the nav.
-  alternates: {
-    types: {
-      'application/pdf': [
-        { url: '/cv/victory-udoh-cv-frontend-2026.pdf', title: 'CV, frontend focused' },
-        { url: '/cv/victory-udoh-cv-backend-2026.pdf', title: 'CV, backend focused' },
-      ],
-    },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE.title,
+    description: SITE.description,
+    images: ['/brand/og.png'],
   },
   // Icons are file-based conventions: app/icon.svg, app/icon.png,
   // app/apple-icon.png and app/favicon.ico are picked up automatically. This
@@ -45,12 +76,19 @@ export const metadata: Metadata = {
     ],
     apple: [{ url: '/apple-icon.png', sizes: '180x180' }],
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'pomegranate',
-    description: 'Writing about web systems, from the database down to the pixel.',
-    images: ['/brand/og.png'],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      // let Google use the full-size image and show a larger text snippet
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
   },
+  formatDetection: { telephone: false, address: false, email: false },
 };
 
 /**
@@ -70,8 +108,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" data-theme="light" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/* Feed discovery. Browsers and readers look for this to offer a
+            subscribe option when someone lands on the site. */}
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="pomegranate · writing"
+          href="/writing/rss.xml"
+        />
       </head>
       <body className="min-h-screen flex flex-col">
+        <StructuredData />
         <ReadingProgress />
         <SiteHeader />
         <main className="flex-1">{children}</main>

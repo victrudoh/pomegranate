@@ -6,6 +6,20 @@ export const metadata: Metadata = {
   title: 'Projects',
   description:
     'Eight platforms built or maintained across fintech, property, booking, e-commerce and public sector work.',
+  alternates: { canonical: '/projects' },
+  openGraph: {
+    type: 'website',
+    url: '/projects',
+    title: 'Projects',
+    description:
+      'Eight platforms built or maintained across fintech, property, booking, e-commerce and public sector work.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Projects',
+    description:
+      'Eight platforms built or maintained across fintech, property, booking, e-commerce and public sector work.',
+  },
 };
 
 export default function ProjectsPage() {

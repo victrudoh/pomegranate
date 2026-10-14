@@ -3,6 +3,9 @@ title: Postgres indexes I should have created six months earlier
 date: 2026-06-03
 summary: Five slow queries from production, what the explain plan said, and the composite index that took each one from hundreds of milliseconds to single digits.
 tags: [PostgreSQL, Performance]
+hero: /writing/postgres-indexes.png
+heroAlt: Abstract vertical bars of varying height in the brand palette
+heroCaption: "Generated art for this post. Ordered structure: the shape an index gives to rows."
 ---
 
 Indexes are cheap to add and expensive to postpone. Every one of these was found the same way: a page that felt slightly wrong, a look at the query log, and a plan that was doing far more work than the result justified.

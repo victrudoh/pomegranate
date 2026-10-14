@@ -124,3 +124,29 @@ export function DatabaseIcon({ size = 16, className }: IconProps) {
     </svg>
   );
 }
+
+export function ShareIcon({ size = 15, className }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
+      <path d="M12 3v12M7.5 7.5 12 3l4.5 4.5" />
+    </svg>
+  );
+}
+
+export function LinkIcon({ size = 15, className }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7" />
+      <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7" />
+    </svg>
+  );
+}
+
+export function CheckIcon({ size = 15, className }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  );
+}

@@ -6,6 +6,20 @@ export const metadata: Metadata = {
   title: 'Writing',
   description:
     'Long-form notes on web systems: payments, Postgres, frontend state, performance and AI product constraints.',
+  alternates: { canonical: '/writing' },
+  openGraph: {
+    type: 'website',
+    url: '/writing',
+    title: 'Writing',
+    description:
+      'Long-form notes on web systems: payments, Postgres, frontend state, performance and AI product constraints.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Writing',
+    description:
+      'Long-form notes on web systems: payments, Postgres, frontend state, performance and AI product constraints.',
+  },
 };
 
 export default function WritingPage() {

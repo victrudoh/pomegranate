@@ -6,6 +6,20 @@ export const metadata: Metadata = {
   title: 'About',
   description:
     'Victory Andrew Udoh, software engineer in Uyo, Nigeria. Five years across fintech, property, booking and public sector platforms.',
+  alternates: { canonical: '/about' },
+  openGraph: {
+    type: 'website',
+    url: '/about',
+    title: 'About',
+    description:
+      'Victory Andrew Udoh, software engineer in Uyo, Nigeria. Five years across fintech, property, booking and public sector platforms.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About',
+    description:
+      'Victory Andrew Udoh, software engineer in Uyo, Nigeria. Five years across fintech, property, booking and public sector platforms.',
+  },
 };
 
 const TIMELINE = [
