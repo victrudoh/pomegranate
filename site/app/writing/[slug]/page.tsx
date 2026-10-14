@@ -2,10 +2,12 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import Script from 'next/script';
 import { getAllPosts, getPost, formatDate } from '@/lib/posts';
 import { Prose } from '@/components/Prose';
 import { ShareRow } from '@/components/ShareRow';
-import { ArrowRight } from '@/components/Icons';
+import { TagList } from '@/components/TagList';
+import { ArrowLeft, ArrowRight } from '@/components/Icons';
 import { SITE, absolute } from '@/lib/site';
 
 type Params = { params: Promise<{ slug: string }> };
@@ -107,9 +109,10 @@ function PostStructuredData({ slug, title, summary, date, tags, hero }: {
   };
 
   return (
-    <script
+    <Script
+      id={`post-structured-data-${slug}`}
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(graph).replace(/</g, '\\u003c') }}
     />
   );
 }
@@ -134,6 +137,16 @@ export default async function PostPage({ params }: Params) {
         hero={post.hero}
       />
 
+      <div className="wrap-narrow mb-8">
+        <Link
+          href="/writing"
+          className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-4 py-2 text-[14px] font-medium text-[var(--muted)] transition-colors hover:text-[var(--accent)]"
+        >
+          <ArrowLeft className="transition-transform group-hover:-translate-x-1" />
+          Back to writing
+        </Link>
+      </div>
+
       {/* Title block. Narrow measure so the headline is readable, not a wall. */}
       <header className="wrap-narrow">
         <h1 className="text-[clamp(30px,4.2vw,50px)] leading-[1.1] tracking-[-0.026em]">
@@ -145,15 +158,7 @@ export default async function PostPage({ params }: Params) {
           </time>
           <span className="mono-meta">{post.readingMinutes} MIN READ</span>
           <span className="flex flex-wrap gap-2">
-            {post.tags.map((t) => (
-              <span
-                key={t}
-                className="rounded-full border px-2.5 py-0.5 text-[11.5px]"
-                style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}
-              >
-                {t}
-              </span>
-            ))}
+            <TagList tags={post.tags} variant="meta" />
           </span>
         </div>
       </header>

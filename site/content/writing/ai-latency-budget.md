@@ -4,8 +4,8 @@ date: 2026-05-21
 summary: Discount Hub taught me that users forgive a wrong answer faster than a slow one. Designing an AI-assisted product around the 400ms expectation.
 tags: [AI, Product]
 hero: /writing/ai-latency-budget.png
-heroAlt: Abstract horizontal rules all stopping at the same vertical limit, in the brand palette
-heroCaption: Generated art for this post. Every request runs out of time at the same line.
+heroAlt: Laptop product interface with recommendation cards racing toward a stopwatch deadline
+heroCaption: Generated art for this post. A useful answer only counts if it arrives while the user can still use it.
 ---
 
 The first version of the recommendation feature was good. The suggestions were relevant, the ranking was sensible, and users ignored it.

@@ -1,3 +1,4 @@
+import Script from 'next/script';
 import { SITE, absolute } from '@/lib/site';
 
 /**
@@ -71,10 +72,12 @@ export function StructuredData() {
   };
 
   return (
-    <script
+    <Script
+      id="site-structured-data"
       type="application/ld+json"
+      strategy="beforeInteractive"
       // The payload is built from constants in this repo, never user input.
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(graph).replace(/</g, '\\u003c') }}
     />
   );
 }

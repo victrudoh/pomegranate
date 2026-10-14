@@ -4,8 +4,8 @@ date: 2026-09-18
 summary: Building a wallet UI is easy. Reconciling it against a transaction log with a pending state is where every property platform quietly loses money.
 tags: [Fintech, React]
 hero: /writing/wallets-and-ledgers.png
-heroAlt: Abstract horizontal rules of varying weight in the brand palette
-heroCaption: Generated art for this post. Movements between two sides that should always reconcile.
+heroAlt: Wallet and transaction ledger reconciling money flows between tenants, landlords, banks and property nodes
+heroCaption: Generated art for this post. The interface is easy; the ledger is where the truth has to balance.
 ---
 
 A wallet interface takes an afternoon. Two numbers, a currency symbol, a list of movements underneath. Every demo I have seen of one looks finished, and almost none of them are.

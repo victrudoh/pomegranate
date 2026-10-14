@@ -11,8 +11,13 @@
    ───────────────────────────────────────────────────────────────────── */
 
 @theme {
-  /* type */
-  --font-sans: 'Satoshi', 'General Sans', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  /* type.
+     --font-sans-loaded is injected by next/font from lib/fonts.ts, so Satoshi is
+     a real self-hosted file rather than a name that silently resolves to the
+     system font. The literal 'Satoshi' stays first for the rare case where a
+     visitor already has it installed locally. */
+  --font-sans: 'Satoshi', var(--font-sans-loaded), 'General Sans', ui-sans-serif, system-ui,
+    'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* the single accent, plus the aril ramp used only for the brand mark */
@@ -565,6 +570,183 @@ html[data-theme='light'] {
   .post-row:hover .post-title {
     transform: none;
   }
+}
+
+/* ── back to top ──────────────────────────────────────────────────────
+   Floating action button with a reading-progress ring. The ring is driven by
+   the same scroll fraction as the top progress bar, so they cannot disagree.
+
+   Motion discipline: the button enters with a transform and opacity transition
+   only, and is disabled entirely under reduced motion. It is a navigation
+   control, so it still appears and still works when motion is off. */
+.back-to-top {
+  position: fixed;
+  right: clamp(16px, 3vw, 32px);
+  bottom: clamp(16px, 3vw, 32px);
+  z-index: 35;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--bg-deep) 88%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+  color: var(--fg);
+  cursor: pointer;
+  /* hidden state */
+  opacity: 0;
+  transform: translateY(14px) scale(0.86);
+  pointer-events: none;
+  transition:
+    opacity 0.32s ease,
+    transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.back-to-top[data-visible='1'] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* a small physical nudge on press, matching the rest of the site */
+.back-to-top:active {
+  transform: translateY(1px) scale(0.97);
+}
+
+.back-to-top-ring,
+.back-to-top-arrow {
+  grid-area: 1 / 1;
+}
+
+.back-to-top-ring {
+  width: 48px;
+  height: 48px;
+  /* the ring is the progress indicator, so it must not swallow clicks */
+  pointer-events: none;
+}
+
+.back-to-top-arrow {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.back-to-top:hover .back-to-top-arrow {
+  transform: translateY(-2px);
+}
+
+/* The trigger element for the back-to-top button.
+
+   It must be a spacer, not an overlay. An earlier attempt gave it a height of
+   150vh with a matching negative bottom margin, which works in a plain document
+   but silently breaks inside any scroll container (the spacer then overlaps the
+   content instead of displacing it, and the threshold no longer corresponds to
+   1.5 screens).
+
+   This version takes real space and keeps it. The visible effect is one screen
+   and a half of empty area before the first section, so instead of leaving a
+   gap the spacer is pulled out of the layout with `position: absolute` inside a
+   zero-height, relatively positioned wrapper. The wrapper is 0px tall, so it
+   never affects the page; the absolute child is 150vh tall, so its bottom edge
+   is a stable geometric threshold at 1.5 viewport heights from the document top.
+
+   Height is set in JS as well, because `vh` inside a scroll container is
+   relative to the container, not the window. */
+.back-to-top-sentinel-wrap {
+  position: relative;
+  height: 0;
+  overflow: visible;
+}
+
+.back-to-top-sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 150vh;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* the ring fill is driven by scroll position, on the compositor, exactly like
+   the top progress bar. Browsers without scroll-driven animation keep the
+   resting offset set inline, so the ring simply reads as empty. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .back-to-top-ring circle:last-of-type {
+      animation: pg-ring linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+
+@keyframes pg-ring {
+  from {
+    stroke-dashoffset: 125.66;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* the ring's own transition makes the fill feel continuous rather than steppy */
+.back-to-top-ring circle:last-of-type {
+  transition: stroke-dashoffset 0.15s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top,
+  .back-to-top-arrow,
+  .back-to-top-ring circle:last-of-type {
+    transition: none;
+  }
+
+  .back-to-top {
+    transform: none;
+  }
+
+  .back-to-top:active,
+  .back-to-top:hover .back-to-top-arrow {
+    transform: none;
+  }
+}
+
+/* ── tags ─────────────────────────────────────────────────────────────
+   Tags are links, not decoration. A reader who finishes one post on Postgres
+   should be able to reach the others, and this is the cheapest internal linking
+   a small site can have. */
+.tag-link {
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.tag-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 8%, transparent);
+}
+
+/* inside a post row, keep the link from fighting the row hover state */
+.post-row:hover .tag-link {
+  color: var(--fg);
+  border-color: var(--border-strong);
+}
+
+.post-row:hover .tag-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 /* ── share row ────────────────────────────────────────────────────────

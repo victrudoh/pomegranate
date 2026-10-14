@@ -86,6 +86,14 @@ export function ArrowRight({ size = 16, className }: IconProps) {
   );
 }
 
+export function ArrowLeft({ size = 16, className }: IconProps) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M19 12H5M11 6l-6 6 6 6" />
+    </svg>
+  );
+}
+
 export function DownloadIcon({ size = 16, className }: IconProps) {
   return (
     <svg {...base(size, className)}>

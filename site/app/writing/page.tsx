@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { getAllPosts } from '@/lib/posts';
+import { getAllTags } from '@/lib/tags';
 import { PostRow } from '@/components/PostRow';
 
 export const metadata: Metadata = {
@@ -24,6 +26,7 @@ export const metadata: Metadata = {
 
 export default function WritingPage() {
   const posts = getAllPosts();
+  const tags = getAllTags();
 
   return (
     <section className="wrap py-14 md:py-20">
@@ -37,6 +40,27 @@ export default function WritingPage() {
           comes out of production work rather than a tutorial.
         </p>
       </header>
+
+      {/* Browse by tag. Also the entry point for the per-tag pages, which are
+          what actually connect one post to the next. */}
+      {tags.length > 0 && (
+        <nav aria-label="Browse by tag" className="mb-10 md:mb-14">
+          <span className="mono-meta">BROWSE BY TAG</span>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {tags.map((t) => (
+              <Link
+                key={t.slug}
+                href={`/writing/tagged/${t.slug}`}
+                className="tag-link rounded-full border px-3 py-1 text-[12.5px]"
+                style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}
+              >
+                {t.tag}
+                <span style={{ color: 'var(--faint)' }}> {t.count}</span>
+              </Link>
+            ))}
+          </div>
+        </nav>
+      )}
 
       {posts.length === 0 ? (
         <p style={{ color: 'var(--muted)' }}>

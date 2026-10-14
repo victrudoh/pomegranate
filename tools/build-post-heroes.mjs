@@ -267,14 +267,18 @@ async function main() {
     console.log(`${hero.out}  ${(size / 1024).toFixed(0)} KB  (from ${hero.source})`);
   }
 
-  // abstract essay heroes, generated rather than sourced
-  for (const essay of ESSAYS) {
-    const svg = essayArt(essay.kind, essay.seed);
-    await sharp(Buffer.from(svg))
-      .png({ compressionLevel: 9 })
-      .toFile(`${OUT}/${essay.out}`);
-    const size = (await import('node:fs')).statSync(`${OUT}/${essay.out}`).size;
-    console.log(`${essay.out}  ${(size / 1024).toFixed(0)} KB  (generated, ${essay.kind})`);
+  // The six essay heroes are now curated generated editorial images, not these
+  // older abstract placeholders. Keep the generator for provenance/debugging,
+  // but make overwriting the current artwork explicit.
+  if (process.env.BUILD_LEGACY_ABSTRACT_HEROES === '1') {
+    for (const essay of ESSAYS) {
+      const svg = essayArt(essay.kind, essay.seed);
+      await sharp(Buffer.from(svg))
+        .png({ compressionLevel: 9 })
+        .toFile(`${OUT}/${essay.out}`);
+      const size = (await import('node:fs')).statSync(`${OUT}/${essay.out}`).size;
+      console.log(`${essay.out}  ${(size / 1024).toFixed(0)} KB  (generated, ${essay.kind})`);
+    }
   }
 }
 

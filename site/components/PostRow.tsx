@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Post } from '@/lib/posts';
 import { formatDate } from '@/lib/posts';
+import { TagList } from './TagList';
 
 /**
  * The writing index row. Editorial rather than boxed: border on top, never
@@ -31,16 +32,8 @@ export function PostRow({ post }: { post: Post }) {
         </p>
       </div>
 
-      <span className="flex flex-wrap items-start gap-2 md:flex-col md:items-end">
-        {post.tags.map((t) => (
-          <span
-            key={t}
-            className="rounded-full border px-2.5 py-0.5 text-[11.5px]"
-            style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}
-          >
-            {t}
-          </span>
-        ))}
+      <span className="flex justify-end">
+        <TagList tags={post.tags} links={false} layout="stack" />
       </span>
     </Link>
   );

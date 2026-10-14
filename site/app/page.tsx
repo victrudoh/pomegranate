@@ -24,7 +24,7 @@ export default function HomePage() {
   const latest = posts[0];
   const rest = posts.slice(1, 6);
   const featured = projects.filter((p) => p.featured);
-  const others = projects.filter((p) => !p.featured).slice(0, 4);
+  const others = projects.filter((p) => !p.featured).slice(0, 3);
 
   return (
     <>

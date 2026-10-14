@@ -4,8 +4,8 @@ date: 2026-07-14
 summary: Plateau State's public site does not have the luxury of assuming bandwidth. What load budgets, image discipline and progressive enhancement actually looked like.
 tags: [Performance, Accessibility]
 hero: /writing/public-sector-performance.png
-heroAlt: Abstract node and edge graph in the brand palette
-heroCaption: "Generated art for this post. A page on a slow connection: sparse, and taking its time to arrive."
+heroAlt: Lightweight public services website displayed on a mid-range Android phone outside a Nigerian civic building
+heroCaption: "Generated art for this post. The page has to be useful before the connection becomes generous."
 ---
 
 A state government website has a user base you cannot negotiate with. Somebody checking a public notice is doing it on a mid-range Android phone, on a network that drops, possibly paying for the data. Every design decision downstream of that fact is different from a product site.

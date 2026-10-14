@@ -4,8 +4,8 @@ date: 2026-10-02
 summary: When your payment endpoint gets called twice at 2am, a database transaction is not enough. How to make retries safe without double-charging a customer.
 tags: [Payments, NestJS, PostgreSQL]
 hero: /writing/idempotency-keys.png
-heroAlt: Abstract lattice of repeated dots in the brand palette
-heroCaption: "Generated art for this post. The same mark, repeated: one logical operation, arriving more than once."
+heroAlt: Duplicate payment cards routed through a locked server with one transaction safely replayed
+heroCaption: "Generated art for this post. Two arrivals, one logical operation, and a server that remembers."
 ---
 
 We shipped a wallet that could charge a customer twice, and it took four weeks to find out. Not because the code was careless, but because the code was reasonable. A client retried, the load balancer routed to a different instance, and both instances did exactly what they were told.

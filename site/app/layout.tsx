@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import './globals.css';
+import { satoshi } from '@/lib/fonts';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { ReadingProgress } from '@/components/ReadingProgress';
+import { BackToTop, BackToTopSentinel } from '@/components/BackToTop';
 import { StructuredData } from '@/components/StructuredData';
 import { SITE } from '@/lib/site';
 
@@ -105,9 +108,19 @@ try {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="light" suppressHydrationWarning>
+    <html
+      lang="en"
+      data-theme="light"
+      // the font class injects --font-sans-loaded, which globals.css consumes
+      className={satoshi.variable}
+      suppressHydrationWarning
+    >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <Script
+          id="theme-bootstrap"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeScript }}
+        />
         {/* Feed discovery. Browsers and readers look for this to offer a
             subscribe option when someone lands on the site. */}
         <link
@@ -118,11 +131,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="min-h-screen flex flex-col">
+        {/* The scroll trigger must be the FIRST thing in the body: it is 1.5
+            viewport heights tall and its bottom edge is the threshold. Mounting
+            it later would move the threshold down with it. */}
+        <BackToTopSentinel />
         <StructuredData />
         <ReadingProgress />
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />
+        <BackToTop />
         {/* Portal target for the mobile menu.
 
             The menu renders into this node instead of inside the header. The
