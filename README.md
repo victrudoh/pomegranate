@@ -32,4 +32,4 @@ Full documentation, including how to publish a post, how each image is generated
 
 ## Content status
 
-Eight posts are written. Two are news analysis from October 2026 (the Rust Adobe clones, and God's Eye View); six are engineering essays. All of them are mine to review and correct before publishing, and the news posts in particular carry dated numbers that go stale. Details are in `site/README.md`.
+Nine posts are written. Three are news analysis from October 2026 (the Rust Adobe clones, God's Eye View, and Lagos Life); six are engineering essays. All of them are mine to review and correct before publishing, and the news posts in particular carry dated numbers that go stale. Details are in `site/README.md`.
